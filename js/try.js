@@ -1,5 +1,5 @@
-import * as THREE from "https://cdn.skypack.dev/three@0.136.0";
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader";
+import * as THREE from "https://cdn.skypack.dev/three@0.159.0";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.159.0/examples/jsm/loaders/GLTFLoader";
 
 
 const monkeyUrl = new URL('/model/helmetanimating.glb', import.meta.url);
