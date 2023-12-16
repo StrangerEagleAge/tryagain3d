@@ -73,7 +73,7 @@ assetLoader.load(monkeyUrl.href, function (gltf4) {
 
 //!
 const clock = new THREE.Clock();
-
+/*
 function animate() {
 	requestAnimationFrame(animate)
 
@@ -82,8 +82,9 @@ function animate() {
 	renderer.render(scene, camera);
 }
 
-renderer.setAnimationLoop(animate);
 
+renderer.setAnimationLoop(animate);
+*/
 window.addEventListener('resize', function () {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
