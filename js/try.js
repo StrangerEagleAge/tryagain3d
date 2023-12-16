@@ -51,16 +51,16 @@ camera.position.x = 0;  // x = 0 чтобы модель была по цент�
 
 const assetLoader = new GLTFLoader();
 
-var mixer; //!
+//var mixer; //!
 assetLoader.load(monkeyUrl.href, function (gltf4) {
 	const model = gltf4.scene;
 	scene.add(model);
-	mixer = new THREE.AnimationMixer(model);  //!
-	const clips = gltf4.animations;  //!
+	//mixer = new THREE.AnimationMixer(model);  //!
+	//const clips = gltf4.animations;  //!
 	//const clip = THREE.AnimationClip.findByName(clips, 'Idle');  //! Idle
 	//const action = mixer.clipAction(clip);  //!
-	var action = mixer.clipAction(gltf4.animations[0]);
-	action.play();  //!
+	//var action = mixer.clipAction(gltf4.animations[0]);
+	//action.play();  //!
 
 	gltf4.scene.scale.set(1, 1, 1) // Увеличить масштаб
 	gltf4.scene.rotation.y = -0.9; // Повернуть модель по оси:y
