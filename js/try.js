@@ -1,93 +1,90 @@
-import * as THREE from "https://cdn.skypack.dev/three@0.159.0";
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.159.0/examples/jsm/loaders/GLTFLoader";
-
-
-const monkeyUrl = new URL('/model/helmetanimating.glb', import.meta.url);
-
-const renderer = new THREE.WebGLRenderer();
-
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-document.body.appendChild(renderer.domElement);
+<script type="module">
+import * as THREE from "https://cdn.skypack.dev/three@0.136.0";
+import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader";
+import { FontLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/FontLoader";
+import { TextGeometry } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/geometries/TextGeometry";
 
 const scene = new THREE.Scene();
-
 const camera = new THREE.PerspectiveCamera(
-	45,
-	window.innerWidth / window.innerHeight,
-	1,
-	1000
-); //OrbitControls
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 20;
+const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
+//let controls = new OrbitControls(camera, renderer.domElement);
 
-//? СВЕТ
-var light = new THREE.AmbientLight(0xffffff); // soft white light (мягкий белый свет)
+const light = new THREE.DirectionalLight("blueviolet", 10);
+light.position.set(-2, 0, 20);
 scene.add(light);
 
-// тестовый свет:
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
-hemiLight.position.set(0, 50, 0);
-scene.add(hemiLight)
+//добавление музыки для атмосферности
+const body = document.querySelector("body");
+const audioMac = new Audio("macintosh-plus-420.mp3");
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.54);
-dirLight.position.set(-8, 12, 8);
-dirLight.castShadow = true;
-dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-scene.add(dirLight);
+audioMac.volume = 0.1;
 
+body.onclick = () => {
+  audioMac.play();
+  body.style.cursor = "default";
+};
+//загрузка модели и установление её настроек
+const loader = new GLTFLoader();
 
-//? End of СВЕТ
+loader.load(
+  "https://threejs.org/examples/models/gltf/Nefertiti/Nefertiti.glb",
+  function (gltf) {
 
-//? Фон
-//renderer.setClearColor(0xA3A3A3);
-renderer.setClearColor(0x151515);  // это задний фон canvas
-//? End of Фон
+    let model = gltf.scene;
+    model.traverse(node => {
+      if (node.isMesh){
+        node.material.map = null;
+        node.material.metalness = 0.5;
+        node.material.roughness = 0.6;
+      }
+    })
+    model.position.set(0, -2, 0);
+    model.scale.setScalar(0.4);
 
-//? Камера
-camera.position.z = 5;  // z = 5 чтобы модель была по центру canvas
-camera.position.x = 0;  // x = 0 чтобы модель была по центру canvas
-//? End of Камера
+    model.rotation.y = 1.5;
+    model.rotation.x = 0.4;
+    
+    scene.add(gltf.scene);
+  }
+);
+//загрузка текста и установление его настроек
+const loaderText = new FontLoader();
 
+loaderText.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", function (font) {
+  const geometry = new TextGeometry("its all in your h e a d", {
+    font: font,
+    size: 0.2,
+    height: 0.01,
+    curveSegments: 10,
+    bevelEnabled: true,
+    bevelThickness: 0.01,
+    bevelSize: 0.005,
+    bevelSegments: 2
+  });
+  const material = new THREE.MeshPhongMaterial({
+    color: "royalblue",
+    shininess: 1
+  });
+  const textHate = new THREE.Mesh(geometry, material);
 
-const assetLoader = new GLTFLoader();
-
-//var mixer; //!
-assetLoader.load(monkeyUrl.href, function (gltf4) {
-	const model = gltf4.scene;
-	scene.add(model);
-	//mixer = new THREE.AnimationMixer(model);  //!
-	//const clips = gltf4.animations;  //!
-	//const clip = THREE.AnimationClip.findByName(clips, 'Idle');  //! Idle
-	//const action = mixer.clipAction(clip);  //!
-	//var action = mixer.clipAction(gltf4.animations[0]);
-	//action.play();  //!
-
-	gltf4.scene.scale.set(1, 1, 1) // Увеличить масштаб
-	gltf4.scene.rotation.y = -0.9; // Повернуть модель по оси:y
-	gltf4.scene.position.x = 2.2; // передвинуть модель по оси:x
-
-	scene.add(gltf4.scene)
-}, undefined, function (error) {
-	console.error(error);
+  textHate.position.x = -1.25;
+  textHate.position.z = 18;
+  textHate.position.y = -0.1;
+  scene.add(textHate);
 });
 
-//!
-const clock = new THREE.Clock();
-/*
-function animate() {
-	requestAnimationFrame(animate)
+renderer.setAnimationLoop(() => {
+  renderer.render(scene, camera);
+})
 
-	const delta = clock.getDelta();
-	mixer.update(delta);
-	renderer.render(scene, camera);
-}
-
-
-renderer.setAnimationLoop(animate);
-*/
-window.addEventListener('resize', function () {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize(this.window.innerWidth, window.innerHeight);
-});
-
+</script>
